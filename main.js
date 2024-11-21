@@ -8,16 +8,17 @@ window.addEventListener("DOMContentLoaded", () => {
         <form action=''>
           <div class='form-input__wrapper'>
             <h1 class='form-input__title'>Инпут-Файл</h1>
-            <label class='form-input__field'>
-              <input type='file' multiple />
-              <span class='form-input__btn'>Загрузить файл</span>
-            </label>
             <div class='form-input__info'>
-              <span class='error'></span>
               <span class='message'></span>
             </div>
             <div class='form-input__grid'></div>
-            <button class='form-input__go' type='submit'>Отправить</button>
+            <div class='form-input__bottom'>
+              <label class='form-input__field'>
+                <input type='file' multiple />
+                <span class='form-input__btn'>Загрузить файл</span>
+              </label>
+              <button class='form-input__go' type='submit'>Отправить</button>
+            </div>
           </div>
         </form>
       </div>
@@ -43,58 +44,70 @@ window.addEventListener("DOMContentLoaded", () => {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
 
-      const newReader = new FileReader();
+      if (fileList[i]) {
+        if (fileList.find(elem => elem.name === file.name)) {
+          console.log('fire')
+          return;
+        }
+      }
 
-      newReader.readAsText(file);
+      if (fileList.length < 5) {
+        const preview = document.createElement("div");
+        preview.classList.add("preview");
 
-      newReader.onload = function() {
-        console.log(newReader.result);
-      };
+        const previewImg = document.createElement("img");
+        previewImg.classList.add("preview__img");
+        preview.appendChild(previewImg);
 
-      const preview = document.createElement("div");
-      preview.classList.add("preview");
+        const previewButton = document.createElement("button");
+        previewButton.classList.add("preview__delete");
+        previewButton.innerText = "Удалить";
+        previewButton.type = "button";
+        preview.appendChild(previewButton);
 
-      const previewImg = document.createElement("img");
-      previewImg.classList.add("preview__img");
-      preview.appendChild(previewImg);
+        parrentFiles.insertAdjacentElement("beforeend", preview);
 
-      const previewButton = document.createElement("button");
-      previewButton.classList.add("preview__delete");
-      previewButton.innerText = "Удалить";
-      previewButton.type = "button";
-      preview.appendChild(previewButton);
+        // if (fileList.splice(fileList.indexOf(file), 1)) {
+        //   console.log(fileList)
+        // }
+        if (file.type.startsWith("image/")) {
+          previewImg.file = file;
+          let fileItem;
 
-      parrentFiles.insertAdjacentElement("beforeend", preview);
+          const reader = new FileReader();
+          reader.onload = (function (aImg) {
+            fileItem = {
+              name: file.name,
+              modified: file.lastModified,
+              size: file.size,
+              data: reader.result,
+            };
+            // console.log(fileList.indexOf(fileItem.name))
+            // console.log(fileItem.name === fileList[i].name)
+            
+            fileList.push(fileItem);
+            return function (e) {
+              aImg.src = e.target.result;
+            };
+          })(previewImg);
 
-      if (file.type.startsWith("image/")) {
-        previewImg.file = file;
-        let fileItem;
+          reader.readAsDataURL(file);
 
-        const reader = new FileReader();
-        reader.onload = (function (aImg) {
-          fileItem = {
-            name: file.name,
-            modified: file.lastModified,
-            size: file.size,
-            data: reader.result,
-          };
-          // console.log(fileItem)
-          fileList.push(fileItem);     
-          return function (e) {
-            aImg.src = e.target.result;
-          };
-        })(previewImg);
+          previewButton.addEventListener("click", () => {
+            if (fileList.length === 5 && document.querySelector('.error')) {
+              document.querySelector('.error').remove();
+            }
 
-        reader.readAsDataURL(file);
-
-        previewButton.addEventListener("click", () => {
-          fileList.splice(fileList.indexOf(fileItem), 1);
-          preview.remove();
-          replacementInput();
-          input.addEventListener("change", event => onChange(event));
-
-          console.log(fileList);
-        });
+            fileList.splice(fileList.indexOf(fileItem), 1);
+            preview.remove();
+            replacementInput();
+            input.addEventListener("change", event => onChange(event));
+            
+            // console.log(fileList);
+          });
+        }
+      } else {
+        document.querySelector('.form-input__info').innerHTML = '<span class="error">«Превышено допустимое количество файлов: 5»</span>';
       }
     }
   };
@@ -127,6 +140,6 @@ window.addEventListener("DOMContentLoaded", () => {
     parrentFiles.innerHTML = '';
     fileList = [];
 
-    console.log(fileList);
+    // console.log(fileList);
   });
 });

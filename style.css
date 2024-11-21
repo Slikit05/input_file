@@ -37,6 +37,12 @@ html {
 .form-input__btn {
   display: block;
   margin-top: 16px;
+  border-radius: 20px;
+  border: 1px solid #808080;
+  padding: 15px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  cursor: pointer;
 }
 
 .form-input__info {
@@ -85,4 +91,13 @@ html {
   box-shadow: none;
   border: none;
   outline: none;
+  cursor: pointer;
+}
+
+.error {
+  background-color: #fff;
+  border-radius: 20px;
+  display: block;
+  padding: 15px;
+  color: rgb(228, 38, 38);
 }
