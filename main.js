@@ -8,8 +8,8 @@ window.addEventListener("DOMContentLoaded", () => {
         <form action=''>
           <div class='form-input__wrapper'>
             <h1 class='form-input__title'>Инпут-Файл</h1>
+            <span class='form-input__info-text'>Вы можете загрузить до 5 файлов JPG, JPEG, PNG, размер одного — до 10 МБ</span>
             <div class='form-input__info'>
-              <span class='message'></span>
             </div>
             <div class='form-input__grid'></div>
             <div class='form-input__bottom'>
@@ -41,12 +41,37 @@ window.addEventListener("DOMContentLoaded", () => {
     const eventTar = event.target;
     const files = eventTar.files;
 
+    const showMessage = (message, type) => {
+      const messageParent = document.querySelector('.form-input__info');
+  
+      messageParent.innerHTML = `
+      <div class='message'>
+        <div class="message__wrap">
+          <span class="message__text ${type}">${message}</span>
+        </div>
+        <div class='message-delete'></div>
+      </div>`;
+  
+      // const deleteMessage = setTimeout(() => {
+      //   messageParent.innerHTML = '';
+      // }, 7000)
+  
+      document.querySelector('.message-delete').addEventListener('click', event => {
+        const evenTar = event.target;
+  
+        evenTar.closest('.message').remove();
+        // clearTimeout(deleteMessage);
+      })
+    }
+
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
 
       if (fileList[i]) {
         if (fileList.find(elem => elem.name === file.name)) {
-          console.log('fire')
+          showMessage(`Файл ${file.name} уже добавлен`, 'error');
+          input.value = "";
           return;
         }
       }
@@ -67,9 +92,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
         parrentFiles.insertAdjacentElement("beforeend", preview);
 
-        // if (fileList.splice(fileList.indexOf(file), 1)) {
-        //   console.log(fileList)
-        // }
         if (file.type.startsWith("image/")) {
           previewImg.file = file;
           let fileItem;
@@ -82,9 +104,7 @@ window.addEventListener("DOMContentLoaded", () => {
               size: file.size,
               data: reader.result,
             };
-            // console.log(fileList.indexOf(fileItem.name))
-            // console.log(fileItem.name === fileList[i].name)
-            
+
             fileList.push(fileItem);
             return function (e) {
               aImg.src = e.target.result;
@@ -102,12 +122,19 @@ window.addEventListener("DOMContentLoaded", () => {
             preview.remove();
             replacementInput();
             input.addEventListener("change", event => onChange(event));
-            
-            // console.log(fileList);
           });
         }
       } else {
-        document.querySelector('.form-input__info').innerHTML = '<span class="error">«Превышено допустимое количество файлов: 5»</span>';
+        showMessage(`Превышено допустимое количество файлов: 5`, 'error');
+      }
+    }
+
+    if (fileList.length >= 5) {
+      const wrapMessage = document.querySelector('.message__wrap')
+      wrapMessage.insertAdjacentHTML('beforeend', '<span class="message__caption">Не загруженные файлы:</span><ul class="message__list"></ul>')
+
+      for (let i = files.length >= 5 ? 5 : 0; i < files.length; i++) {
+        wrapMessage.querySelector('.message__list').insertAdjacentHTML('beforeend', `<li class="message__name">${files[i].name}</li>`)
       }
     }
   };
@@ -139,7 +166,5 @@ window.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("change", event => onChange(event));
     parrentFiles.innerHTML = '';
     fileList = [];
-
-    // console.log(fileList);
   });
 });
