@@ -43,98 +43,92 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const showMessage = (message, type) => {
       const messageParent = document.querySelector('.form-input__info');
-  
-      messageParent.innerHTML = `
-      <div class='message'>
+
+      messageParent.innerHTML = `<div class='message'>
         <div class="message__wrap">
-          <span class="message__text ${type}">${message}</span>
         </div>
         <div class='message-delete'></div>
       </div>`;
-  
+
+      console.log(document.querySelector('.message__wrap'))
+
+      // document.querySelector('.message__wrap').insertAdjacentHTML('beforeend' `<span class="message__text ${type}">${message}</span>`)
+
       // const deleteMessage = setTimeout(() => {
       //   messageParent.innerHTML = '';
       // }, 7000)
-  
+
       document.querySelector('.message-delete').addEventListener('click', event => {
         const evenTar = event.target;
-  
+
         evenTar.closest('.message').remove();
         // clearTimeout(deleteMessage);
       })
     }
 
-
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
 
-      if (fileList[i]) {
-        if (fileList.find(elem => elem.name === file.name)) {
-          showMessage(`Файл ${file.name} уже добавлен`, 'error');
-          input.value = "";
-          return;
-        }
-      }
-
-      if (fileList.length < 5) {
-        const preview = document.createElement("div");
-        preview.classList.add("preview");
-
-        const previewImg = document.createElement("img");
-        previewImg.classList.add("preview__img");
-        preview.appendChild(previewImg);
-
-        const previewButton = document.createElement("button");
-        previewButton.classList.add("preview__delete");
-        previewButton.innerText = "Удалить";
-        previewButton.type = "button";
-        preview.appendChild(previewButton);
-
-        parrentFiles.insertAdjacentElement("beforeend", preview);
-
-        if (file.type.startsWith("image/")) {
-          previewImg.file = file;
-          let fileItem;
-
-          const reader = new FileReader();
-          reader.onload = (function (aImg) {
-            fileItem = {
-              name: file.name,
-              modified: file.lastModified,
-              size: file.size,
-              data: reader.result,
-            };
-
-            fileList.push(fileItem);
-            return function (e) {
-              aImg.src = e.target.result;
-            };
-          })(previewImg);
-
-          reader.readAsDataURL(file);
-
-          previewButton.addEventListener("click", () => {
-            if (fileList.length === 5 && document.querySelector('.error')) {
-              document.querySelector('.error').remove();
-            }
-
-            fileList.splice(fileList.indexOf(fileItem), 1);
-            preview.remove();
-            replacementInput();
-            input.addEventListener("change", event => onChange(event));
-          });
-        }
+      if (fileList.find(elem => elem.name === file.name)) {
+        showMessage(`Файл ${file.name} уже добавлен`, 'error');
       } else {
-        showMessage(`Превышено допустимое количество файлов: 5`, 'error');
-      }
-    }
+        if (fileList.length < 5) {
+          const preview = document.createElement("div");
+          preview.classList.add("preview");
 
-    if (fileList.length >= 5) {
-      const wrapMessage = document.querySelector('.message__wrap')
-      wrapMessage.insertAdjacentHTML('beforeend', '<span class="message__caption">Не загруженные файлы:</span><ul class="message__list"></ul>')
+          const previewImg = document.createElement("img");
+          previewImg.classList.add("preview__img");
+          preview.appendChild(previewImg);
 
-      for (let i = files.length >= 5 ? 5 : 0; i < files.length; i++) {
-        wrapMessage.querySelector('.message__list').insertAdjacentHTML('beforeend', `<li class="message__name">${files[i].name}</li>`)
+          const previewButton = document.createElement("button");
+          previewButton.classList.add("preview__delete");
+          previewButton.innerText = "Удалить";
+          previewButton.type = "button";
+          preview.appendChild(previewButton);
+
+          parrentFiles.insertAdjacentElement("beforeend", preview);
+
+          if (file.type.startsWith("image/")) {
+            previewImg.file = file;
+            let fileItem;
+
+            const reader = new FileReader();
+            reader.onload = (function (aImg) {
+              fileItem = {
+                name: file.name,
+                modified: file.lastModified,
+                size: file.size,
+                data: reader.result,
+              };
+
+              fileList.push(fileItem);
+              return function (e) {
+                aImg.src = e.target.result;
+              };
+            })(previewImg);
+
+            reader.readAsDataURL(file);
+
+            previewButton.addEventListener("click", () => {
+              if (fileList.length === 5 && document.querySelector('.error')) {
+                document.querySelector('.message').remove();
+              }
+
+              fileList.splice(fileList.indexOf(fileItem), 1);
+              preview.remove();
+              replacementInput();
+              input.addEventListener("change", event => onChange(event));
+            });
+          }
+        } else if (fileList.length >= 5) {
+          showMessage(`Превышено допустимое количество файлов: 5`, 'error');
+          const wrapMessage = document.querySelector('.message__wrap')
+          wrapMessage.insertAdjacentHTML('beforeend', '<span class="message__caption">Не загруженные файлы:</span><ul class="message__list"></ul>')
+    
+          for (let i = files.length >= 5 ? 5 : 0; i < files.length; i++) {
+            wrapMessage.querySelector('.message__list').insertAdjacentHTML('beforeend', `<li class="message__name">${files[i].name}</li>`)
+          }
+        }
       }
     }
   };
