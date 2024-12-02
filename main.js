@@ -26,6 +26,8 @@ window.addEventListener("DOMContentLoaded", () => {
   );
 
   let fileList = [];
+  let fileListError = [];
+  let messages = [];
   const buttonSubmit = document.querySelector(".form-input__go");
   const parrentFiles = document.querySelector(".form-input__grid");
   let input = document.querySelector(".form-input__field input");
@@ -50,27 +52,40 @@ window.addEventListener("DOMContentLoaded", () => {
         <div class='message-delete'></div>
       </div>`;
 
-      console.log(document.querySelector('.message__wrap'))
-
-      // document.querySelector('.message__wrap').insertAdjacentHTML('beforeend' `<span class="message__text ${type}">${message}</span>`)
-
-      // const deleteMessage = setTimeout(() => {
-      //   messageParent.innerHTML = '';
-      // }, 7000)
+      messages.forEach(elem => {
+        document.querySelector('.message__wrap').insertAdjacentHTML('beforeend', `<span class="message__text ${type}">${elem}</span>`)
+      })
 
       document.querySelector('.message-delete').addEventListener('click', event => {
         const evenTar = event.target;
 
         evenTar.closest('.message').remove();
-        // clearTimeout(deleteMessage);
       })
     }
+
+    const showListFiles = (messageWrap, arr) => {
+      messageWrap.insertAdjacentHTML('beforeend', '<span class="message__caption">Не загруженные файлы:</span><ul class="message__list"></ul>')
+
+      arr.forEach(elem => {
+        messageWrap.querySelector('.message__list').insertAdjacentHTML('beforeend', `<li class="message__name">${elem}</li>`)
+      });
+    }
+
+    fileListError = [];
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
 
-      if (fileList.find(elem => elem.name === file.name)) {
-        showMessage(`Файл ${file.name} уже добавлен`, 'error');
+      if (fileList.find(elem => elem.name === file.name)) {        
+        if (messages.indexOf('Файлы уже добавлены.') < 0) {
+          messages.push('Файлы уже добавлены.');
+        }
+        fileListError.push(file.name);
+      } else if (fileList.length >= 5) {
+        if (messages.indexOf('Превышено допустимое количество файлов: 5') < 0) {
+          messages.push('Превышено допустимое количество файлов: 5');
+        }
+        fileListError.push(file.name);
       } else {
         if (fileList.length < 5) {
           const preview = document.createElement("div");
@@ -118,19 +133,22 @@ window.addEventListener("DOMContentLoaded", () => {
               preview.remove();
               replacementInput();
               input.addEventListener("change", event => onChange(event));
+
+              console.log(fileList)
             });
           }
-        } else if (fileList.length >= 5) {
-          showMessage(`Превышено допустимое количество файлов: 5`, 'error');
-          const wrapMessage = document.querySelector('.message__wrap')
-          wrapMessage.insertAdjacentHTML('beforeend', '<span class="message__caption">Не загруженные файлы:</span><ul class="message__list"></ul>')
-    
-          for (let i = files.length >= 5 ? 5 : 0; i < files.length; i++) {
-            wrapMessage.querySelector('.message__list').insertAdjacentHTML('beforeend', `<li class="message__name">${files[i].name}</li>`)
-          }
-        }
+        } 
       }
     }
+
+    console.log(fileListError)
+
+    if (messages.length) {
+      showMessage(messages, 'error');
+      showListFiles(document.querySelector('.message__wrap'), fileListError)
+    }
+
+    input.value = "";
   };
 
   input.addEventListener("change", event => onChange(event));
