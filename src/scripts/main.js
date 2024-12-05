@@ -1,6 +1,9 @@
 window.addEventListener("DOMContentLoaded", () => {
   const app = document.querySelector(".app");
 
+  const gif = new Image();
+  gif.src = '../src/img/car.gif';
+
   app.insertAdjacentHTML(
     "beforeend",
     `
@@ -145,9 +148,14 @@ window.addEventListener("DOMContentLoaded", () => {
           const previewWrapper = document.createElement("div")
           previewWrapper.classList.add("preview__wrapper");
 
+          const previewWrapperImg = document.createElement("div")
+          previewWrapperImg.classList.add("preview__wrapper-img");
+          previewWrapperImg.classList.add("is-radius");
+          previewWrapper.appendChild(previewWrapperImg);
+
           const previewImg = document.createElement("img");
           previewImg.classList.add("preview__img");
-          previewWrapper.appendChild(previewImg);
+          previewWrapperImg.appendChild(previewImg);
 
           const previewButton = document.createElement("button");
           previewButton.classList.add("preview__delete");
@@ -162,26 +170,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
           // console.log(file.type)
 
-          preview.querySelector('.preview__img').insertAdjacentHTML('afterend', `
-            <video class='preloader' muted autoplay loop>
-              <source src="src/video/car.mp4" type="video/mp4">
-            </video>
+          preview.querySelector('.preview__wrapper-img').insertAdjacentHTML('afterend', `
+            <img class="preloader" src="src/img/car.gif" />
             <div class="preview__wrap-text">
               <span class='preview__name'>Имя файла: ${file.name.split('.')[0]}</span>
               <span class='preview__format'>Формат:<br> .${file.name.split('.')[1]}</span>
               <span class='preview__size'>Размер:<br> ${readableFileSize(file.size, 'KB')}</span>
             </div>
           `)
-
-          // setTimeout(() => {
-          //   document.querySelectorAll('.preview').forEach(el => {
-          //     const heightPreviewImg = el.querySelector('.preview__wrapper');
-          //     const preloader = el.querySelector('.preloader');
-      
-          //     preloader.remove();
-          //     heightPreviewWrapper.style.maxHeight = `${heightPreviewWrapper.scrollHeight}px`
-          //   })
-          // }, 2000)
 
 
           previewImg.file = file;
@@ -221,10 +217,25 @@ window.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // console.log(readableFileSize(file.size))
-
       if (itemError.sizeError || itemError.formatError || itemError.addedError || itemError.moreFilesError) fileListError.push(itemError);
     }
+
+
+    setTimeout(() => {
+      document.querySelectorAll('.preview').forEach(el => {
+        const heightPreviewImg = el.querySelector('.preview__wrapper-img');
+
+        if (el.querySelector('.preloader')) {
+          const preloader = el.querySelector('.preloader');
+          preloader.remove();
+        }
+
+        if (heightPreviewImg.classList.contains('is-radius')) {
+          heightPreviewImg.classList.remove('.is-radius');
+          heightPreviewImg.style.height = `${heightPreviewImg.scrollHeight}px`
+        }
+      })
+    }, 1700)
 
     if (messages.length) {
       showMessage(messages, 'error');
