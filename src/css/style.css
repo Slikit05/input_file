@@ -10,8 +10,48 @@ html {
   box-sizing: border-box;
 }
 
+@property --myColor1 {
+  syntax: '<color>';
+  initial-value: #ca259e;
+  inherits: false;
+}
+
+@property --myColor2 {
+  syntax: '<color>';
+  initial-value: #d45e4a;
+  inherits: false;
+}
+
+@property --myColor3 {
+  syntax: '<color>';
+  initial-value: #409bbf;
+  inherits: false;
+}
+
+.button {
+  width: 100%;
+  background: linear-gradient(0.60turn, var(--myColor1), var(--myColor2), var(--myColor3));
+  color: #fff;
+  outline: none;
+  box-shadow: none;
+  border: none;
+  border-radius: 40px;
+  padding: 15px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: block;
+  transition: --myColor1 0.5s ease-in-out, --myColor2 0.5s ease-in-out, --myColor3 0.5s ease-in-out;
+  text-align: center;
+}
+
+.button:hover {
+  --myColor1: #96d5d5;
+  --myColor2: #3b48a3;
+  --myColor3: #ff00dd;
+}
+
 .container-input {
-  background-image: url('img/bg.jpg');
+  background-image: url('../img/bg.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   padding: 120px 60px;
@@ -21,7 +61,7 @@ html {
   max-width: 1400px;
   margin: 0 auto;
   color: #fff;
-  display: block;  
+  display: block;
   border-radius: 40px;
   padding: 3px;
   overflow: hidden;
@@ -68,30 +108,14 @@ html {
 }
 
 .form-input__go {
-  width: 100%;
-  background: linear-gradient(0.56turn, #ca259e, #d45e4a, #409bbf);
-  color: #fff;
   font-size: 20px;
   line-height: normal;
-  outline: none;
-  box-shadow: none;
-  border: none;
-  border-radius: 40px;
-  padding: 15px;
-  text-transform: uppercase;
-  cursor: pointer;
-  display: block;
   align-self: flex-end;
 }
 
 .form-input__btn {
-  display: block;
   margin-top: 16px;
   border-radius: 20px;
-  border: 1px solid #808080;
-  padding: 15px;
-  text-transform: uppercase;
-  cursor: pointer;
 }
 
 .form-input__info {
@@ -107,11 +131,30 @@ html {
   width: 100%;
 }
 
+.preloader {
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  left: 1px;
+  bottom: 2px;
+  border-radius: 20px;
+  transform: scale(-1, 1);
+}
+
 .preview {
   border-radius: 20px;
-  overflow: hidden;  
+  /* overflow: hidden; */
   padding: 1px;
-  background: linear-gradient(to right, #ca259e, #409bbf);
+  background: linear-gradient(0.94turn, #ca259e, #409bbf);
+  transition: all 0.3s ease-in-out;
+  position: relative;
+}
+
+.preview:hover {
+  background: linear-gradient(0.10turn, #ca259e, #409bbf);
 }
 
 .preview__wrapper {
@@ -122,6 +165,7 @@ html {
   justify-content: space-between;
   flex-direction: column;
   height: 100%;
+  max-height: 209px;
 }
 
 .preview__img {
@@ -165,10 +209,6 @@ html {
 
 .preview__delete {
   padding: 12px;
-  width: 100%;
-  text-align: center;
-  background: linear-gradient(0.56turn, #ca259e, #d45e4a, #409bbf);
-  color: #fff;
   font-size: 18px;
   line-height: normal;
   text-transform: uppercase;
@@ -176,6 +216,7 @@ html {
   border: none;
   outline: none;
   cursor: pointer;
+  border-radius: 0;
 }
 
 .message {
@@ -229,10 +270,6 @@ html {
   list-style: none;
 }
 
-.message__item {
-
-}
-
 .message__name {
   margin: 0;
   padding-left: 15px;
@@ -260,6 +297,6 @@ html {
   color: rgb(20, 110, 28);
 }
 
-.error {  
+.error {
   color: rgb(228, 38, 38);
 }

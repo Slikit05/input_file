@@ -15,7 +15,7 @@ window.addEventListener("DOMContentLoaded", () => {
                   <div class='form-input__bottom'>
                     <label class='form-input__field'>
                       <input type='file' multiple />
-                      <span class='form-input__btn'>Загрузить файл</span>
+                      <span class='form-input__btn button'>Загрузить файл</span>
                     </label>
                   </div>
                 </div>
@@ -25,7 +25,7 @@ window.addEventListener("DOMContentLoaded", () => {
               </div>
               <div class='form-input__grid'></div>
               <div class='form-input__info'></div>
-              <button class='form-input__go' type='submit'>Отправить</button>
+              <button class='form-input__go button' type='submit'>Отправить</button>
             </div>
           </form>
         </div>
@@ -140,6 +140,7 @@ window.addEventListener("DOMContentLoaded", () => {
         if (file.type.startsWith("image/")) {
           const preview = document.createElement("div");
           preview.classList.add("preview");
+          preview.classList.add("is-animate");
 
           const previewWrapper = document.createElement("div")
           previewWrapper.classList.add("preview__wrapper");
@@ -150,6 +151,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
           const previewButton = document.createElement("button");
           previewButton.classList.add("preview__delete");
+          previewButton.classList.add("button");
           previewButton.innerText = "Удалить";
           previewButton.type = "button";
           previewWrapper.appendChild(previewButton);
@@ -158,15 +160,29 @@ window.addEventListener("DOMContentLoaded", () => {
 
           parrentFiles.insertAdjacentElement("beforeend", preview);
 
-          console.log(file.type)
+          // console.log(file.type)
 
           preview.querySelector('.preview__img').insertAdjacentHTML('afterend', `
+            <video class='preloader' muted autoplay loop>
+              <source src="src/video/car.mp4" type="video/mp4">
+            </video>
             <div class="preview__wrap-text">
               <span class='preview__name'>Имя файла: ${file.name.split('.')[0]}</span>
               <span class='preview__format'>Формат:<br> .${file.name.split('.')[1]}</span>
               <span class='preview__size'>Размер:<br> ${readableFileSize(file.size, 'KB')}</span>
             </div>
           `)
+
+          // setTimeout(() => {
+          //   document.querySelectorAll('.preview').forEach(el => {
+          //     const heightPreviewImg = el.querySelector('.preview__wrapper');
+          //     const preloader = el.querySelector('.preloader');
+      
+          //     preloader.remove();
+          //     heightPreviewWrapper.style.maxHeight = `${heightPreviewWrapper.scrollHeight}px`
+          //   })
+          // }, 2000)
+
 
           previewImg.file = file;
           let fileItem;
@@ -188,6 +204,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
           reader.readAsDataURL(file);
 
+          console.log(previewImg.scrollHeight)
+
           previewButton.addEventListener("click", () => {
             if (document.querySelector('.error')) {
               document.querySelector('.message').remove();
@@ -207,8 +225,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
       if (itemError.sizeError || itemError.formatError || itemError.addedError || itemError.moreFilesError) fileListError.push(itemError);
     }
-
-    console.log(messages)
 
     if (messages.length) {
       showMessage(messages, 'error');
