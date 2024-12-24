@@ -2,7 +2,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const app = document.querySelector(".app");
 
   const gif = new Image();
-  gif.src = '../src/img/car.gif';
+  gif.src = "../src/img/car.gif";
 
   app.insertAdjacentHTML(
     "beforeend",
@@ -36,8 +36,9 @@ window.addEventListener("DOMContentLoaded", () => {
   `
   );
 
-  const format = ['jpg', 'jpeg', 'png'];
+  const format = ["jpg", "jpeg", "png"];
 
+  let fileListOnSend = [];
   let fileList = [];
   let fileListError = [];
 
@@ -50,19 +51,19 @@ window.addEventListener("DOMContentLoaded", () => {
     const newInput = input.cloneNode(true);
     input.replaceWith(newInput);
     input = newInput;
-  }
+  };
 
   const onChange = (event) => {
     const eventTar = event.target;
     const files = eventTar.files;
     const messages = [];
 
-    if (document.querySelector('.message')) {
-      document.querySelector('.message').remove();
+    if (document.querySelector(".message")) {
+      document.querySelector(".message").remove();
     }
 
     const showMessage = (message, type) => {
-      const messageParent = document.querySelector('.form-input__info');
+      const messageParent = document.querySelector(".form-input__info");
 
       messageParent.innerHTML = `<div class='message'>
         <div class="message__wrap">
@@ -70,44 +71,57 @@ window.addEventListener("DOMContentLoaded", () => {
         <div class='message-delete'></div>
       </div>`;
 
-      message.forEach(elem => {
-        document.querySelector('.message__wrap').insertAdjacentHTML('beforeend', `<span class="message__text ${type}">${elem}</span>`)
-      })
+      message.forEach((elem) => {
+        document
+          .querySelector(".message__wrap")
+          .insertAdjacentHTML(
+            "beforeend",
+            `<span class="message__text ${type}">${elem}</span>`
+          );
+      });
 
-      document.querySelector('.message-delete').addEventListener('click', event => {
-        const evenTar = event.target;
+      document
+        .querySelector(".message-delete")
+        .addEventListener("click", (event) => {
+          const evenTar = event.target;
 
-        evenTar.closest('.message').remove();
-      })
-    }
+          evenTar.closest(".message").remove();
+        });
+    };
 
     const showListFiles = (messageWrap, arr) => {
-      messageWrap.insertAdjacentHTML('beforeend', '<span class="message__caption">Не загруженные файлы:</span><ul class="message__list"></ul>')
+      messageWrap.insertAdjacentHTML(
+        "beforeend",
+        '<span class="message__caption">Не загруженные файлы:</span><ul class="message__list"></ul>'
+      );
 
-      arr.forEach(elem => {
-        messageWrap.querySelector('.message__list').insertAdjacentHTML('beforeend', `<li class="message__item">
+      arr.forEach((elem) => {
+        messageWrap.querySelector(".message__list").insertAdjacentHTML(
+          "beforeend",
+          `<li class="message__item">
           <span class="">Имя файла: ${elem.name}</span>
           <ul>
-            ${elem.sizeError ? `<li>${elem.sizeError}</li>` : ''}
-            ${elem.formatError ? `<li>${elem.formatError}</li>` : ''}
-            ${elem.addedError ? `<li>${elem.addedError}</li>` : ''}
-            ${elem.moreFilesError ? `<li>${elem.moreFilesError}</li>` : ''}
+            ${elem.sizeError ? `<li>${elem.sizeError}</li>` : ""}
+            ${elem.formatError ? `<li>${elem.formatError}</li>` : ""}
+            ${elem.addedError ? `<li>${elem.addedError}</li>` : ""}
+            ${elem.moreFilesError ? `<li>${elem.moreFilesError}</li>` : ""}
           </ul>
-        </li>`)
+        </li>`
+        );
       });
-    }
+    };
 
     const readableFileSize = (size, sizeType) => {
       const DEFAULT_SIZE = 0;
       const fileSize = size ?? DEFAULT_SIZE;
-    
+
       if (!fileSize) {
         return `${DEFAULT_SIZE} kb`;
       }
-    
+
       const sizeKb = fileSize / 1024;
-      
-      if (sizeType === 'MB') {
+
+      if (sizeType === "MB") {
         return Number((sizeKb / 1024).toFixed(2));
       } else if (sizeType === "KB") {
         if (size > 1024) {
@@ -116,7 +130,7 @@ window.addEventListener("DOMContentLoaded", () => {
           return `${size.toFixed(2)} KB`;
         }
       }
-    }
+    };
 
     fileListError = [];
 
@@ -125,30 +139,51 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const itemError = {
         name: file.name,
-        sizeError: readableFileSize(file.size, 'MB') > 10 ? 'Превышен максимальный размер файла' : '',
-        moreFilesError: fileList.length >= 5 ? 'Превышен максимум файлов' : '',
-        formatError: !format.find(elem => elem === file.type.split('/')[1]) ? 'Неверный формат' : '',
-        addedError: fileList.find(elem => elem.name === file.name) ? 'Этот файл уже добавлен' : '',
-      }
+        sizeError:
+          readableFileSize(file.size, "MB") > 10
+            ? "Превышен максимальный размер файла"
+            : "",
+        moreFilesError: fileList.length >= 5 ? "Превышен максимум файлов" : "",
+        formatError: !format.find((elem) => elem === file.type.split("/")[1])
+          ? "Неверный формат"
+          : "",
+        addedError: fileList.find((elem) => elem.name === file.name)
+          ? "Этот файл уже добавлен"
+          : "",
+      };
 
-      if (fileList.find(elem => elem.name === file.name)) {
-        if (messages.indexOf('Файлы уже добавлены.') < 0) messages.push('Файлы уже добавлены.');
-      }  else if (!format.find(elem => elem === file.type.split('/')[1])) {
-        if (messages.indexOf('Неверный формат файлов') < 0) messages.push('Неверный формат файлов');
-      } else if (readableFileSize(file.size, 'MB') > 10) {
-        if (messages.indexOf('Превышен максимальный размер файлов') < 0) messages.push('Превышен максимальный размер файла');
+      if (fileList.find((elem) => elem.name === file.name)) {
+        if (messages.indexOf("Файлы уже добавлены.") < 0)
+
+          messages.push("Файлы уже добавлены.");
+
+      } else if (!format.find((elem) => elem === file.type.split("/")[1])) {
+
+        if (messages.indexOf("Неверный формат файлов") < 0)
+
+          messages.push("Неверный формат файлов");
+
+      } else if (readableFileSize(file.size, "MB") > 10) {
+        if (messages.indexOf("Превышен максимальный размер файлов") < 0)
+
+          messages.push("Превышен максимальный размер файла");
+
       } else if (fileList.length >= 5) {
-        if (messages.indexOf('Превышено допустимое количество файлов: 5') < 0) messages.push('Превышено допустимое количество файлов: 5');
+        if (messages.indexOf("Превышено допустимое количество файлов: 5") < 0)
+
+          messages.push("Превышено допустимое количество файлов: 5");
+
       } else if (fileList.length < 5) {
+
         if (file.type.startsWith("image/")) {
           const preview = document.createElement("div");
           preview.classList.add("preview");
           preview.classList.add("is-animate");
 
-          const previewWrapper = document.createElement("div")
+          const previewWrapper = document.createElement("div");
           previewWrapper.classList.add("preview__wrapper");
 
-          const previewWrapperImg = document.createElement("div")
+          const previewWrapperImg = document.createElement("div");
           previewWrapperImg.classList.add("preview__wrapper-img");
           previewWrapperImg.classList.add("is-radius");
           previewWrapper.appendChild(previewWrapperImg);
@@ -163,22 +198,29 @@ window.addEventListener("DOMContentLoaded", () => {
           previewButton.innerText = "Удалить";
           previewButton.type = "button";
           previewWrapper.appendChild(previewButton);
-          
+
           preview.appendChild(previewWrapper);
 
           parrentFiles.insertAdjacentElement("beforeend", preview);
 
-          // console.log(file.type)
-
-          preview.querySelector('.preview__wrapper-img').insertAdjacentHTML('afterend', `
+          preview.querySelector(".preview__wrapper-img").insertAdjacentHTML(
+            "afterend",
+            `
             <img class="preloader" src="src/img/car.gif" />
             <div class="preview__wrap-text">
-              <span class='preview__name'>Имя файла: ${file.name.split('.')[0]}</span>
-              <span class='preview__format'>Формат:<br> .${file.name.split('.')[1]}</span>
-              <span class='preview__size'>Размер:<br> ${readableFileSize(file.size, 'KB')}</span>
+              <span class='preview__name'>Имя файла: ${
+                file.name.split(".")[0]
+              }</span>
+              <span class='preview__format'>Формат:<br> .${
+                file.name.split(".")[1]
+              }</span>
+              <span class='preview__size'>Размер:<br> ${readableFileSize(
+                file.size,
+                "KB"
+              )}</span>
             </div>
-          `)
-
+          `
+          );
 
           previewImg.file = file;
           let fileItem;
@@ -200,53 +242,65 @@ window.addEventListener("DOMContentLoaded", () => {
 
           reader.readAsDataURL(file);
 
-          console.log(previewImg.scrollHeight)
-
           previewButton.addEventListener("click", () => {
-            if (document.querySelector('.error')) {
-              document.querySelector('.message').remove();
+
+            if (document.querySelector(".error")) {
+              document.querySelector(".message").remove();
             }
 
             fileList.splice(fileList.indexOf(fileItem), 1);
-            preview.remove();
-            replacementInput();
-            input.addEventListener("change", event => onChange(event));
 
-            console.log(fileList)
+            preview.remove();
+
+            replacementInput();
+
+            input.addEventListener("change", (event) => onChange(event));
+
           });
         }
       }
 
-      if (itemError.sizeError || itemError.formatError || itemError.addedError || itemError.moreFilesError) fileListError.push(itemError);
+      if (
+        itemError.sizeError ||
+        itemError.formatError ||
+        itemError.addedError ||
+        itemError.moreFilesError
+      )
+        fileListError.push(itemError);
+
+
+      !format.find((elem) => elem === file.type.split("/")[1])
+      ? ""
+      : fileListOnSend.push(file)
     }
 
+    console.log(fileListOnSend)
 
     setTimeout(() => {
-      document.querySelectorAll('.preview').forEach(el => {
-        const heightPreviewImg = el.querySelector('.preview__wrapper-img');
+      document.querySelectorAll(".preview").forEach((el) => {
+        const heightPreviewImg = el.querySelector(".preview__wrapper-img");
 
-        if (el.querySelector('.preloader')) {
-          const preloader = el.querySelector('.preloader');
+        if (el.querySelector(".preloader")) {
+          const preloader = el.querySelector(".preloader");
           preloader.remove();
         }
 
-        if (heightPreviewImg.classList.contains('is-radius')) {
-          heightPreviewImg.classList.remove('.is-radius');
-          heightPreviewImg.style.height = `${heightPreviewImg.scrollHeight}px`
+        if (heightPreviewImg.classList.contains("is-radius")) {
+          heightPreviewImg.classList.remove(".is-radius");
+          heightPreviewImg.style.height = `${heightPreviewImg.scrollHeight}px`;
         }
-      })
-    }, 1700)
+      });
+    }, 1700);
 
     if (messages.length) {
-      showMessage(messages, 'error');
-      showListFiles(document.querySelector('.message__wrap'), fileListError)
+      showMessage(messages, "error");
+      showListFiles(document.querySelector(".message__wrap"), fileListError);
     }
 
     input.value = "";
-    console.log(fileList)
   };
 
-  input.addEventListener("change", event => onChange(event));
+  input.addEventListener("change", (event) => onChange(event));
 
   buttonSubmit.addEventListener("click", (event) => {
     event.preventDefault();
@@ -256,22 +310,26 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    alert(
-      JSON.stringify(
-        fileList.map(({ name, modified, size }) => ({
-          name,
-          modified,
-          size,
-          data: '',
-        })),
-        null,
-        2
-      )
-    );
+    fileListOnSend.forEach(elem => {
+      const fileData = new FormData()
+
+      fileData.append('document', elem)
+
+      const apiUrl = 'https://file.io';
+
+      fetch(apiUrl, { method: 'POST', body: fileData })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error(error));
+    })
 
     replacementInput();
-    input.addEventListener("change", event => onChange(event));
-    parrentFiles.innerHTML = '';
+    input.addEventListener("change", (event) => onChange(event));
+    parrentFiles.innerHTML = "";
     fileList = [];
+    fileListOnSend = [];
+    if (document.querySelector('.message')) {
+      document.querySelector('.message').remove();
+    }
   });
 });

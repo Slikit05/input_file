@@ -55,6 +55,7 @@ html {
   background-size: cover;
   background-repeat: no-repeat;
   padding: 120px 60px;
+  min-height: 100vh;
 }
 
 .form-input {
@@ -72,7 +73,7 @@ html {
   border-radius: 40px;
   padding: 60px;
   background-color: #000;
-  min-height: calc(100vh - 246px);
+  min-height: 50vh;
   display: flex;
   flex-wrap: wrap;
   gap: 32px;
@@ -126,7 +127,7 @@ html {
 
 .form-input__grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
   gap: 20px;
   width: 100%;
   align-items: flex-start;
